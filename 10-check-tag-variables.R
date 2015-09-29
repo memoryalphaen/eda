@@ -6,6 +6,13 @@
  stxml  <- xmlParse("./ma.xml") # dump file from 2015.07.18
  xmltop <- xmlRoot(stxml) # content of root 
  
+ sbonet = "individual"
+ sbtwot = "planet"
+ sbthrt = "species"
+ sbfout = "starship"
+ sbfivt = "year"
+ sbsixt = "trading cards"
+
  sidebar_tags  <- list()
  sidebar_count <- list()
  n             <- xmlSize(xmltop) # number of nodes
@@ -38,7 +45,7 @@
                                  opts_regex = stri_opts_regex(dotall = TRUE))[[1]]
      # collect the sidebar type
      sidebar_type <- tolower(tmp[1, 2])
-     if (sidebar_type %in% c("individual", "planet", "species", "starship", "year", "trading cards")) {
+     if (sidebar_type %in% c(sbonet, sbtwot, sbthrt, sbfout, sbfivt, sbsixt)) {
        # collect the remaining text
        tmp <- tmp[1, 3]
        # split fields
