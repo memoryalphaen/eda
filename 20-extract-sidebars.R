@@ -12,6 +12,13 @@
  sbfou    <- list()
  sbfiv    <- list()
  sbsix    <- list()
+ sbonet = "individual"
+ sbtwot = "planet"
+ sbthrt = "species"
+ sbfout = "starship"
+ sbfivt = "year"
+ sbsixt = "trading cards"
+ 
  n        <- xmlSize(xmltop)
  for (i in 2:n) {
    # get the text in the revision in the page
@@ -40,7 +47,7 @@
                                  opts_regex = stri_opts_regex(dotall = TRUE))[[1]]
      # collect the sidebar type
      sidebar_type <- tolower(tmp[1, 2])
- if (sidebar_type %in% c("individual", "planet", "species", "starship", "year", "trading cards")) {
+     if (sidebar_type %in% c(sbonet, sbtwot, sbthrt, sbfout, sbfivt, sbsixt)) {
        # collect the remaining text
        tmp <- tmp[1, 3]
        # split fields
@@ -57,7 +64,7 @@
        # collect the tags' values
        values <- stri_replace_all_regex(tmp[, 3], "(\"|'')", "")
  
-       if (sidebar_type == "individual") {
+       if (sidebar_type == sbonet) {
          sbone[["Title"]] <- c(sbone[["Title"]], title)
          for (tag in sort(sidebar_tags[[sidebar_type]])) {
            sbone[[tag]] <- c(sbone[[tag]], 
@@ -65,7 +72,7 @@
                                          NA,values[which(tags == tag)]))
          }
        }
-       if (sidebar_type == "planet") {
+       if (sidebar_type == sbtwot) {
          sbtwo[["Title"]] <- c(sbtwo[["Title"]], title)
          for (tag in sort(sidebar_tags[[sidebar_type]])) {
            sbtwo[[tag]] <- c(sbtwo[[tag]], 
@@ -73,7 +80,7 @@
                                      NA,values[which(tags == tag)]))
          }
        }
-       if (sidebar_type == "species") {
+       if (sidebar_type == sbthrt) {
          sbthr[["Title"]] <- c(sbthr[["Title"]], title)
          for (tag in sort(sidebar_tags[[sidebar_type]])) {
            sbthr[[tag]] <- c(sbthr[[tag]], 
@@ -81,7 +88,7 @@
                                        NA,values[which(tags == tag)]))
          }
        }
-       if (sidebar_type == "starship") {
+       if (sidebar_type == sbfout) {
          sbfou[["Title"]] <- c(sbfou[["Title"]], title)
          for (tag in sort(sidebar_tags[[sidebar_type]])) {
            sbfou[[tag]] <- c(sbfou[[tag]], 
@@ -89,7 +96,7 @@
                                        NA,values[which(tags == tag)]))
          }
        }
-       if (sidebar_type == "year") {
+       if (sidebar_type == sbfivt) {
          sbfiv[["Title"]] <- c(sbfiv[["Title"]], title)
          for (tag in sort(sidebar_tags[[sidebar_type]])) {
            sbfiv[[tag]] <- c(sbfiv[[tag]], 
@@ -97,7 +104,7 @@
                                        NA,values[which(tags == tag)]))
          }
        }
-       if (sidebar_type == "trading cards") {
+       if (sidebar_type == sbdixt) {
          sbsix[["Title"]] <- c(sbsix[["Title"]], title)
          for (tag in sort(sidebar_tags[[sidebar_type]])) {
            sbsix[[tag]] <- c(sbsix[[tag]], 
@@ -114,24 +121,24 @@
  print(sprintf("%d / %d", i, n))
  sbone <- data.frame(sbone, stringsAsFactors = FALSE)
  sbone <- sbone[!grepl("(Template:|Talk:|User:)", sbone$Title), ]
- write.csv(file = "individual.csv", x = sbone, quote = TRUE, row.names = FALSE)
+ write.csv(file = paste(sbonet, "csv", sep = "."), x = sbone, quote = TRUE, row.names = FALSE)
  
  sbtwo <- data.frame(sbtwo, stringsAsFactors = FALSE)
  sbtwo <- sbtwo[!grepl("(Template:|Talk:)", sbtwo$Title), ]
- write.csv(file = "planet.csv", x = sbtwo, quote = TRUE, row.names = FALSE)
+ write.csv(file = paste(sbtwot, "csv", sep = "."), x = sbtwo, quote = TRUE, row.names = FALSE)
  
  sbthr <- data.frame(sbthr, stringsAsFactors = FALSE)
  sbthr <- sbthr[!grepl("(Template:|Talk:)", sbthr$Title), ]
- write.csv(file = "species.csv", x = sbthr, quote = TRUE, row.names = FALSE)
+ write.csv(file = paste(sbthrt, "csv", sep = "."), x = sbthr, quote = TRUE, row.names = FALSE)
  
  sbfou <- data.frame(sbfou, stringsAsFactors = FALSE)
  sbfou <- sbfou[!grepl("(Template:|Talk:)", sbfou$Title), ]
- write.csv(file = "starship.csv", x = sbfou, quote = TRUE, row.names = FALSE)
+ write.csv(file = paste(sbfout, "csv", sep = "."), x = sbfou, quote = TRUE, row.names = FALSE)
  
  sbfiv <- data.frame(sbfiv, stringsAsFactors = FALSE)
  sbfiv <- sbfiv[!grepl("(Template:|Talk:)", sbfiv$Title), ]
- write.csv(file = "year.csv", x = sbfiv, quote = TRUE, row.names = FALSE)
+ write.csv(file = paste(sbfivt, "csv", sep = "."), x = sbfiv, quote = TRUE, row.names = FALSE)
  
  sbsix <- data.frame(sbsix, stringsAsFactors = FALSE)
  sbsix <- sbsix[!grepl("(Template:|Talk:)", sbsix$Title), ]
- write.csv(file = "trading_cards.csv", x = sbsix, quote = TRUE, row.names = FALSE)
+ write.csv(file = paste(sbsixt, "csv", sep = "."), x = sbsix, quote = TRUE, row.names = FALSE)
