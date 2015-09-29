@@ -1,9 +1,9 @@
-# 10-check-tag-variables.R
+ # 10-check-tag-variables.R
  # 2015.09.25
  require(XML)
  require(stringi)
  
- stxml  <- xmlParse("./enmemoryalpha_pages_current.xml") # dump file from 2015.07.18
+ stxml  <- xmlParse("./ma.xml") # dump file from 2015.07.18
  xmltop <- xmlRoot(stxml) # content of root 
  
  sidebar_tags  <- list()
@@ -17,7 +17,7 @@
    ns <- xmlValue(xmltop[[i]][["ns"]])
    # filter a sidebar
    sidebar <- stri_match_all_regex(text,
-              pattern    = "\\{\\{[Ss][Ii][Dd][Ee][Bb][Aa][Rr]\\s*(.*?)\\n\\}\\}",
+              pattern    = "\\{\\{[Ss]idebar\\s*(.*?)\\n\\}\\}",
               opts_regex = stri_opts_regex(dotall = TRUE))[[1]][, 2]
    # if found a sidebar in the main namespace
    if (!is.na(sidebar) & ns == "0") {
@@ -33,11 +33,12 @@
      sidebar <- stri_replace_all_regex(sidebar, "<.*?>", "", vectorize_all = FALSE)
      # split the type of sidebar and the tags
      tmp <- stri_match_all_regex(sidebar,
-                                 pattern    = "([\\w/]*)\\|(.*)",
+     #                            pattern    = "([\\w/]*)\\|(.*)",
+                                 pattern    = "(.*?)\\|(.*)",
                                  opts_regex = stri_opts_regex(dotall = TRUE))[[1]]
      # collect the sidebar type
      sidebar_type <- tolower(tmp[1, 2])
-     if (sidebar_type %in% c("individual", "planet", "species", "starship")) {
+     if (sidebar_type %in% c("individual", "planet", "species", "starship", "year", "trading cards")) {
        # collect the remaining text
        tmp <- tmp[1, 3]
        # split fields
