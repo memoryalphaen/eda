@@ -1,23 +1,25 @@
-# 20-extract-sidebars.R
+ # 20-extract-sidebars.R
  # 2015.09.25
  require(XML)
  require(stringi)
  
- stxml  <- xmlParse("./enmemoryalpha_pages_current.xml")
+ stxml  <- xmlParse("./ma.xml") # dump file from 2015.07.18
  xmltop <- xmlRoot(stxml) # content of root
  
- individual <- list()
- planet     <- list()
- species    <- list()
- starship   <- list()
- n          <- xmlSize(xmltop)
+ sbone    <- list()
+ sbtwo    <- list()
+ sbthr    <- list()
+ sbfou    <- list()
+ sbfiv    <- list()
+ sbsix    <- list()
+ n        <- xmlSize(xmltop)
  for (i in 2:n) {
    # get the text in the revision in the page
    title <- xmlValue(xmltop[[i]][["title"]])
    text  <- xmlValue(xmltop[[i]][["revision"]][["text"]])
    # filter a sidebar
    sidebar <- stri_match_all_regex(text,
-                                   pattern    = "\\{\\{[Ss][Ii][Dd][Ee][Bb][Aa][Rr]\\s*(.*?)\\n\\}\\}",
+                                   pattern    = "\\{\\{[Ss]idebar\\s*(.*?)\\n\\}\\}",
                                    opts_regex = stri_opts_regex(dotall = TRUE))[[1]][, 2]
    # if found a sidebar
    if (!is.na(sidebar)) {
@@ -32,11 +34,13 @@
      # remove html comments
      sidebar <- stri_replace_all_regex(sidebar, "<.*?>", "", vectorize_all = FALSE)
      # split the type of sidebar and the tags
-     tmp <- stri_match_all_regex(sidebar, pattern = "([\\w/]*)\\|(.*)",
+     tmp <- stri_match_all_regex(sidebar,
+                                 # pattern = "([\\w/]*)\\|(.*)",
+                                 pattern = "(.*?)\\|(.*)",
                                  opts_regex = stri_opts_regex(dotall = TRUE))[[1]]
      # collect the sidebar type
      sidebar_type <- tolower(tmp[1, 2])
-     if (sidebar_type %in% c("individual", "planet", "species", "starship")) {
+ if (sidebar_type %in% c("individual", "planet", "species", "starship", "year", "trading cards")) {
        # collect the remaining text
        tmp <- tmp[1, 3]
        # split fields
@@ -54,33 +58,49 @@
        values <- stri_replace_all_regex(tmp[, 3], "(\"|'')", "")
  
        if (sidebar_type == "individual") {
-         individual[["Title"]] <- c(individual[["Title"]], title)
+         sbone[["Title"]] <- c(sbone[["Title"]], title)
          for (tag in sort(sidebar_tags[[sidebar_type]])) {
-           individual[[tag]] <- c(individual[[tag]], 
+           sbone[[tag]] <- c(sbone[[tag]], 
                                   ifelse(length(values[which(tags == tag)]) == 0,
                                          NA,values[which(tags == tag)]))
          }
        }
        if (sidebar_type == "planet") {
-         planet[["Title"]] <- c(planet[["Title"]], title)
+         sbtwo[["Title"]] <- c(sbtwo[["Title"]], title)
          for (tag in sort(sidebar_tags[[sidebar_type]])) {
-           planet[[tag]] <- c(planet[[tag]], 
+           sbtwo[[tag]] <- c(sbtwo[[tag]], 
                               ifelse(length(values[which(tags == tag)]) == 0, 
                                      NA,values[which(tags == tag)]))
          }
        }
        if (sidebar_type == "species") {
-         species[["Title"]] <- c(species[["Title"]], title)
+         sbthr[["Title"]] <- c(sbthr[["Title"]], title)
          for (tag in sort(sidebar_tags[[sidebar_type]])) {
-           species[[tag]] <- c(species[[tag]], 
-                              ifelse(length(values[which(tags == tag)]) == 0, 
-                                     NA,values[which(tags == tag)]))
+           sbthr[[tag]] <- c(sbthr[[tag]], 
+                                ifelse(length(values[which(tags == tag)])  == 0, 
+                                       NA,values[which(tags == tag)]))
          }
        }
        if (sidebar_type == "starship") {
-         starship[["Title"]] <- c(starship[["Title"]], title)
+         sbfou[["Title"]] <- c(sbfou[["Title"]], title)
          for (tag in sort(sidebar_tags[[sidebar_type]])) {
-           starship[[tag]] <- c(starship[[tag]], 
+           sbfou[[tag]] <- c(sbfou[[tag]], 
+                                ifelse(length(values[which(tags == tag)])  == 0, 
+                                       NA,values[which(tags == tag)]))
+         }
+       }
+       if (sidebar_type == "year") {
+         sbfiv[["Title"]] <- c(sbfiv[["Title"]], title)
+         for (tag in sort(sidebar_tags[[sidebar_type]])) {
+           sbfiv[[tag]] <- c(sbfiv[[tag]], 
+                                ifelse(length(values[which(tags == tag)])  == 0, 
+                                       NA,values[which(tags == tag)]))
+         }
+       }
+       if (sidebar_type == "trading cards") {
+         sbsix[["Title"]] <- c(sbsix[["Title"]], title)
+         for (tag in sort(sidebar_tags[[sidebar_type]])) {
+           sbsix[[tag]] <- c(sbsix[[tag]], 
                                 ifelse(length(values[which(tags == tag)])  == 0, 
                                        NA,values[which(tags == tag)]))
          }
@@ -92,18 +112,26 @@
    }
  }
  print(sprintf("%d / %d", i, n))
- individual <- data.frame(individual, stringsAsFactors = FALSE)
- individual <- individual[!grepl("(Template:|Talk:|User:)", individual$Title), ]
- write.csv(file = "individual.csv", x = individual, quote = TRUE, row.names = FALSE)
+ sbone <- data.frame(sbone, stringsAsFactors = FALSE)
+ sbone <- sbone[!grepl("(Template:|Talk:|User:)", sbone$Title), ]
+ write.csv(file = "individual.csv", x = sbone, quote = TRUE, row.names = FALSE)
  
- planet <- data.frame(planet, stringsAsFactors = FALSE)
- planet <- planet[!grepl("(Template:|Talk:)", planet$Title), ]
- write.csv(file = "planet.csv", x = planet, quote = TRUE, row.names = FALSE)
+ sbtwo <- data.frame(sbtwo, stringsAsFactors = FALSE)
+ sbtwo <- sbtwo[!grepl("(Template:|Talk:)", sbtwo$Title), ]
+ write.csv(file = "planet.csv", x = sbtwo, quote = TRUE, row.names = FALSE)
  
- species <- data.frame(species, stringsAsFactors = FALSE)
- species <- species[!grepl("(Template:|Talk:)", species$Title), ]
- write.csv(file = "species.csv", x = species, quote = TRUE, row.names = FALSE)
+ sbthr <- data.frame(sbthr, stringsAsFactors = FALSE)
+ sbthr <- sbthr[!grepl("(Template:|Talk:)", sbthr$Title), ]
+ write.csv(file = "species.csv", x = sbthr, quote = TRUE, row.names = FALSE)
  
- starship <- data.frame(starship, stringsAsFactors = FALSE)
- starship <- starship[!grepl("(Template:|Talk:)", starship$Title), ]
- write.csv(file = "starship.csv", x = starship, quote = TRUE, row.names = FALSE)
+ sbfou <- data.frame(sbfou, stringsAsFactors = FALSE)
+ sbfou <- sbfou[!grepl("(Template:|Talk:)", sbfou$Title), ]
+ write.csv(file = "starship.csv", x = sbfou, quote = TRUE, row.names = FALSE)
+ 
+ sbfiv <- data.frame(sbfiv, stringsAsFactors = FALSE)
+ sbfiv <- sbfiv[!grepl("(Template:|Talk:)", sbfiv$Title), ]
+ write.csv(file = "year.csv", x = sbfiv, quote = TRUE, row.names = FALSE)
+ 
+ sbsix <- data.frame(sbsix, stringsAsFactors = FALSE)
+ sbsix <- sbsix[!grepl("(Template:|Talk:)", sbsix$Title), ]
+ write.csv(file = "trading_cards.csv", x = sbsix, quote = TRUE, row.names = FALSE)
