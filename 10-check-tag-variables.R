@@ -3,8 +3,8 @@
 require(XML)
 require(stringi)
  
-stxml  <- xmlParse("./ma.xml") # dump file from 2015.07.18
-xmltop <- xmlRoot(stxml) # content of root 
+stxml  <- xmlParse("./ma.xml") # dump file
+xmltop <- xmlRoot(stxml)       # content of root 
 
 sidebar_tags  <- list()
 sidebar_count <- list()
