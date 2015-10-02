@@ -17,4 +17,4 @@ The scripts run on a database dump of the project (current revision only). This 
 
 ###Current issues###
 * The regular expression looks for "{{sidebar" up to "\n}}". If the link end is only "}}" then it would get either until the whole end of the text, or cut short by some links inside the sidebar itself. The consequence is that sidebar templates that do NOT use the indicated formatting and do NOT end with a closing line with the "}}", will be missed.
-* Currently wipes out all formatting/etc inside each variable when recording it (partly due to the difficulty of parsing mediawiki templates/etc.
+* Currently wipes out all formatting/etc inside each variable when recording it (partly due to the difficulty of parsing mediawiki templates/etc.)
