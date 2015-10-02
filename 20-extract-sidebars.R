@@ -2,16 +2,8 @@
 # 2015.09.25
 require(XML)
 require(stringi)
- 
-stxml  <- xmlParse("./ma.xml") # dump file from 2015.07.18
-xmltop <- xmlRoot(stxml) # content of root
- 
-sbone    <- list()
-sbtwo    <- list()
-sbthr    <- list()
-sbfou    <- list()
-sbfiv    <- list()
-sbsix    <- list()
+
+# sidebar types to examine
 sbonet = "individual"
 sbtwot = "planet"
 sbthrt = "species"
@@ -19,6 +11,16 @@ sbfout = "starship"
 sbfivt = "year"
 sbsixt = "trading cards"
 
+# Main script below -- nothing should need altering
+stxml  <- xmlParse("./ma.xml") # our dump file
+xmltop <- xmlRoot(stxml)       # content of root
+ 
+sbone    <- list()
+sbtwo    <- list()
+sbthr    <- list()
+sbfou    <- list()
+sbfiv    <- list()
+sbsix    <- list()
 n        <- xmlSize(xmltop)
 for (i in 2:n) {
   # get the text in the revision in the page
